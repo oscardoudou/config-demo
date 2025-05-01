@@ -2,9 +2,23 @@ config demo
 =======
 this minimum project show case how config in effect changed due to spring boot version update.
 ## mvn test issue throw error regarding `VAR_SPECIFIC_TO_DEPLOYMENT`
+#### 1.5.3
 Initially, the spring boot version is 1.5.3.RELEASE. if you run `mvn test`, test passed.
-
-after we update the spring boot version to 2.7.18, `mvn test` failed now due to   
+```
+2025-05-01 17:15:46.464  INFO 13746 --- [           main] com.example.configdemo.EnvVarTest        : Started EnvVarTest in 0.331 seconds (JVM running for 0.605)
+Resolved varWithSameValueAcrossDeployment via bean: June
+Resolved varSpecificToDeployment via bean: from-embedded-profile
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.383 sec - in com.example.configdemo.EnvVarTest
+```
+if source .env for VAR_SPECIFIC_TO_DEPLOYMENT, it will have:
+```
+2025-05-01 17:16:41.110  INFO 14419 --- [           main] com.example.configdemo.EnvVarTest        : Started EnvVarTest in 0.31 seconds (JVM running for 0.581)
+Resolved varWithSameValueAcrossDeployment via bean: June
+Resolved varSpecificToDeployment via bean: FROM_DOT_ENV_LOCAL
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.404 sec - in com.example.configdemo.EnvVarTest
+```
+after we update the spring boot version to 2.7.18, `mvn test` failed 
+#### 2.7.18
 ```
 [ERROR] testEnvVarFromBean  Time elapsed: 0.001 s  <<< ERROR!
 java.lang.IllegalStateException: Failed to load ApplicationContext
@@ -17,6 +31,9 @@ Caused by: java.lang.IllegalArgumentException: Could not resolve placeholder 'VA
 If you move the ./application.yml out of the project root directory. Test passed still, meaning it still recognized the embedded profile for spring boot test.  
 It is just ./application.yml in project root directory is taking precedence.
 
+Guess:
+This might due to OS environment variable and config file order switch. Before OS environment is evaluated before config files.
+
 ### remedy 
 build with `-Dspring.config.additional-location` argument pointing to application-embedded.yml
 or move ./application.yml out of project root directory(not clean, break dev current setup/process)   
@@ -24,7 +41,7 @@ or rename to sth else, eg. application.yml to application-prod.yml, so it won't 
 
 
 ## run.sh issue
-### with .env not export VAR_WITH_SAME_VALUE_ACROSS_DEPLOYMENT
+### with .env not export VAR_WITH_SAME_VALUE_ACROSS_DEPLOYMENT(NO boundary-month-inclusive in ./application.yml)
 
 #### 1.5.3
 build with `mvn clean package` no issue  
@@ -83,3 +100,45 @@ org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating
 ```
 2.7.18 doesn't seem recognizes the `var.boundary-month-inclusive` in classpath:/application.yml like 1.5.3
 
+
+### with .env export VAR_WITH_SAME_VALUE_ACROSS_DEPLOYMENT(using var.boundary-month-inclusive in ./application.yml)
+#### 1.5.3
+source .env
+```
+yz@H1DL9Y3:~/configdemo$ env |grep VAR
+VAR_WITH_SAME_VALUE_ACROSS_DEPLOYMENT=JUNE_BUT_ON_SERVER
+VAR_SPECIFIC_TO_DEPLOYMENT=FROM_DOT_ENV_LOCAL
+yz@H1DL9Y3:~/configdemo$ ./run.sh
+ :: Spring Boot ::        (v1.5.3.RELEASE)
+Hello World
+JUNE_BUT_ON_SERVER
+FROM_DOT_ENV_LOCAL
+```
+
+unset either of two VAR would result in error
+Guess: ./application.yml take precedence over classpath:/application.yml, if not present in ./application.yml (specified in run.sh), fall back to classpath:/application.yml 
+
+
+
+
+#### 2.7.18
+build again with approach 3 from remedy
+```
+Resolved varWithSameValueAcrossDeployment via bean: June
+Resolved varSpecificToDeployment via bean: from-embedded-profile
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.575 s - in com.example.configdemo.EnvVarTest
+```
+
+if not source .env, will result error causing missing placeholder values
+
+if source .env
+```
+yz@H1DL9Y3:~/configdemo$ env |grep VAR
+VAR_WITH_SAME_VALUE_ACROSS_DEPLOYMENT=FROM_DOT_ENV
+VAR_SPECIFIC_TO_DEPLOYMENT=FROM_DOT_ENV_LOCAL
+yz@H1DL9Y3:~/configdemo$ ./run.sh
+ :: Spring Boot ::               (v2.7.18)
+Hello World
+JUNE_BUT_ON_SERVER
+FROM_DOT_ENV_LOCAL
+```

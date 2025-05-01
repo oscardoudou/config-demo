@@ -1,2 +1,3 @@
 var:
   specific-to-deployment: ${VAR_SPECIFIC_TO_DEPLOYMENT}
+  boundary-month-inclusive: ${VAR_WITH_SAME_VALUE_ACROSS_DEPLOYMENT}
