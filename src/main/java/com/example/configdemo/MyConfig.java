@@ -9,17 +9,14 @@ public class MyConfig {
     @Value("${VAR_SPECIFIC_TO_DEPLOYMENT}")
     private String varSpecificToDeployment;
 
-//    private final String myVar;
-//
-//    public MyConfig(@Value("${MY_VAR}") String myVar) {
-//        this.myVar = myVar;
-//    }
-//
-//    public String getMyVar() {
-//        return myVar;
-//    }
+    @Value("${VAR_WITH_SAME_VALUE_ACROSS_DEPLOYMENT}")
+    private String varWithSameValueAcrossDeployment;
 
     public String getVarSpecificToDeployment() {
         return varSpecificToDeployment;
+    }
+
+    public String getVarWithSameValueAcrossDeployment() {
+        return varWithSameValueAcrossDeployment;
     }
 }
