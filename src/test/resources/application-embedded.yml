@@ -1,2 +1,3 @@
-VAR_SPECIFIC_TO_DEPLOYMENT: from-embedded-profile
-VAR_WITH_SAME_VALUE_ACROSS_DEPLOYMENT: June
+var:
+  specific-to-deployment: from-embedded-profile
+  boundary-month-inclusive: June

@@ -1,1 +1,3 @@
-VAR_WITH_SAME_VALUE_ACROSS_DEPLOYMENT: June
+var:
+  specific-to-deployment: from-default-profile
+  boundary-month-inclusive: June

@@ -6,10 +6,10 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class MyConfig {
-    @Value("${VAR_SPECIFIC_TO_DEPLOYMENT}")
+    @Value("${var.specific-to-deployment}")
     private String varSpecificToDeployment;
 
-    @Value("${VAR_WITH_SAME_VALUE_ACROSS_DEPLOYMENT}")
+    @Value("${var.boundary-month-inclusive}")
     private String varWithSameValueAcrossDeployment;
 
     public String getVarSpecificToDeployment() {
