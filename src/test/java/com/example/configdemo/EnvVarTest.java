@@ -19,6 +19,6 @@ public class EnvVarTest {
     @Test
     public void testEnvVarFromBean() {
 //        System.out.println("Resolved MY_VAR via bean: " + myConfig.getMyVar());
-        System.out.println("Resolved MY_ENV_VAR via bean: " + myConfig.getMyEnvVar());
+        System.out.println("Resolved VAR_SPECIFIC_TO_DEPLOYMENT via bean: " + myConfig.getVarSpecificToDeployment());
     }
 }

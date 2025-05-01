@@ -6,8 +6,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class MyConfig {
-    @Value("${MY_ENV_VAR}")
-    private String myEnvVar;
+    @Value("${VAR_SPECIFIC_TO_DEPLOYMENT}")
+    private String varSpecificToDeployment;
 
 //    private final String myVar;
 //
@@ -19,7 +19,7 @@ public class MyConfig {
 //        return myVar;
 //    }
 
-    public String getMyEnvVar() {
-        return myEnvVar;
+    public String getVarSpecificToDeployment() {
+        return varSpecificToDeployment;
     }
 }
