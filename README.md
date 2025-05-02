@@ -142,3 +142,13 @@ Hello World
 JUNE_BUT_ON_SERVER
 FROM_DOT_ENV_LOCAL
 ```
+
+
+### Remedy
+modify run.sh to include classpath:/application.yml.  
+But since application.yml has now renamed to application-XXX.yml.
+the argument becomes eg. `--spring.config.location=classpath:/application.yml,./application-server.yml`
+
+It is ok not having `boundary-month-inclusive` in ./application.yml(now ./application-XXX.yml) since it is a `VAR_WITH_SAME_VALUE_ACROSS_DEPLOYMENT`, 
+but if you wanna keep consistent and have every var in yml explicitly present in ./application.yml(not just classpath:/application.yml),  
+then don't work to add `export` for boundary-month-inclusive in .env/.systemd.env(on server) and source it(server read .systemd.env automatically).
